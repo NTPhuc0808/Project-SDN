@@ -9,22 +9,25 @@ import LocationCityIcon from "@material-ui/icons/LocationCity";
 import PublicIcon from "@material-ui/icons/Public";
 import PhoneIcon from "@material-ui/icons/Phone";
 import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
-import { Country, State } from "country-state-city";
 import { useAlert } from "react-alert";
 import CheckoutSteps from "../Cart/CheckoutSteps";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom"; 
+
+import vietnamStates from "./vietnamStates.json";
+  
+
 
 const Shipping = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate(); 
   const { shippingInfo } = useSelector((state) => state.cart);
 
   const [address, setAddress] = useState(shippingInfo.address || "");
   const [city, setCity] = useState(shippingInfo.city || "");
   const [state, setState] = useState(shippingInfo.state || "");
-  const [country, setCountry] = useState(shippingInfo.country || "");
-  const [pinCode, setPinCode] = useState(shippingInfo.pinCode || "");
+  const [country, setCountry] = useState("VN"); 
+  // const [pinCode, setPinCode] = useState(shippingInfo.pinCode || "");
   const [phoneNo, setPhoneNo] = useState(shippingInfo.phoneNo || "");
 
   const shippingSubmit = (e) => {
@@ -35,23 +38,21 @@ const Shipping = () => {
       return;
     }
 
-    if (!address || !city || !pinCode || !country || !state) {
+    if (!address || !city || !country || !state) {
       alert.error("Please fill in all fields");
       return;
     }
 
     dispatch(
-      saveShippingInfo({ address, city, state, country, pinCode, phoneNo })
+      saveShippingInfo({ address, city, state, country, phoneNo })
     );
     
-    // Use navigate instead of history.push
     navigate("/order/confirm");
   };
 
   useEffect(() => {
-    // Reset state when country changes
     if (country) {
-      setState(""); // Reset state if the country changes
+      setState(""); 
     }
   }, [country]);
 
@@ -85,20 +86,20 @@ const Shipping = () => {
               <LocationCityIcon />
               <input
                 type="text"
-                placeholder="City"
+                placeholder="District"
                 required
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
               />
             </div>
 
-            <div>
-              <PinDropIcon />
+            <div style={{ display: "none" }}>
+              {/* <PinDropIcon /> */}
               <input
-                type="number"
+                type="hidden"
                 placeholder="Pin Code"
                 required
-                value={pinCode}
+                value="94000"
                 onChange={(e) => setPinCode(e.target.value)}
               />
             </div>
@@ -118,17 +119,13 @@ const Shipping = () => {
             <div>
               <PublicIcon />
               <select
+                type="hidden"
                 required
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
+                disabled 
               >
-                <option value="">Country</option>
-                {Country &&
-                  Country.getAllCountries().map((item) => (
-                    <option key={item.isoCode} value={item.isoCode}>
-                      {item.name}
-                    </option>
-                  ))}
+                <option value="VN">Vietnam</option>
               </select>
             </div>
 
@@ -140,13 +137,12 @@ const Shipping = () => {
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                 >
-                  <option value="">State</option>
-                  {State &&
-                    State.getStatesOfCountry(country).map((item) => (
-                      <option key={item.isoCode} value={item.isoCode}>
-                        {item.name}
-                      </option>
-                    ))}
+                  <option value="">Province</option>
+                  {vietnamStates.map((item) => (
+                    <option key={item.isoCode} value={item.isoCode}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}

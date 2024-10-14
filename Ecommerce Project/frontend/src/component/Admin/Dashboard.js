@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Sidebar from "./Sidebar.js";
 import "./Dashboard.css";
-import { Typography } from "@material-ui/core";
+import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { Doughnut, Line } from "react-chartjs-2";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +9,9 @@ import { getAdminProduct } from "../../actions/productAction";
 import { getAllOrders } from "../../actions/orderAction.js";
 import { getAllUsers } from "../../actions/userAction.js";
 import MetaData from "../layout/MetaData";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import RobotoRegular from "./fronts/Roboto-Regular.ttf";
 
 import {
   Chart as ChartJS,
@@ -54,7 +57,6 @@ const Dashboard = () => {
       dispatch(getAdminProduct());
       dispatch(getAllOrders());
       dispatch(getAllUsers());
-      console.log(products);
     }, [dispatch]);
   
     let totalAmount = 0;
@@ -84,8 +86,66 @@ const Dashboard = () => {
           },
         ],
       };
-  
-  
+
+    // Function to export all data to PDF
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+
+        // Embedding custom Roboto font
+        doc.addFileToVFS("Roboto-Regular.ttf", RobotoRegular);
+        doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+        doc.setFont("Roboto"); 
+        
+        
+        doc.text(`Dashboard Daily Report: ${new Date().toDateString()}`, 14, 15);
+
+        // Total Amount and Stock Summary
+        doc.text(`Total Amount: ${totalAmount} VND`, 14, 25);
+        doc.text(`Out of Stock Products: ${outOfStock}`, 14, 30);
+        doc.text(`In Stock Products: ${products.length - outOfStock}`, 14, 35);
+
+        // Products Table
+        const productColumn = ["Product Name", "Stock", "Price"];
+        const productRows = products.map(product => [product.name, product.Stock, product.price]);
+
+        doc.autoTable({
+            head: [productColumn],
+            body: productRows,
+            startY: 40,
+            margin: { top: 10 },
+            theme: 'grid',
+            headStyles: { fillColor: [0, 131, 143] },
+        });
+
+        // Orders Table
+        const orderColumn = ["Order ID", "Total Price", "Order Status"];
+        const orderRows = orders.map(order => [order._id, order.totalPrice, order.orderStatus]);
+
+        doc.autoTable({
+            head: [orderColumn],
+            body: orderRows,
+            startY: doc.autoTable.previous.finalY + 10,
+            margin: { top: 10 },
+            theme: 'grid',
+            headStyles: { fillColor: [100, 149, 237] },
+        });
+
+        // Users Table
+        const userColumn = ["User ID", "Name", "Email", "Role"];
+        const userRows = users.map(user => [user._id, user.name, user.email, user.role]);
+
+        doc.autoTable({
+            head: [userColumn],
+            body: userRows,
+            startY: doc.autoTable.previous.finalY + 10,
+            margin: { top: 10 },
+            theme: 'grid',
+            headStyles: { fillColor: [46, 139, 87] },
+        });
+
+        doc.save("DashboardReport.pdf");
+    };
+
     return (
         <div className="dashboard">
           <MetaData title="Dashboard - Admin Panel" />
@@ -96,22 +156,23 @@ const Dashboard = () => {
     
             <div className="dashboardSummary">
               <div>
-                <p>
-                  Total Amount <br /> ₹{totalAmount}
-                </p>
+                <p>Total Amount <br /> {totalAmount} VND</p>
+                <Button variant="contained" color="primary" onClick={exportToPDF}>
+                  Export Dashboard to PDF
+                </Button>
               </div>
               <div className="dashboardSummaryBox2">
                 <Link to="/admin/products">
-                  <p>Product</p>
-                  <p>{products && products.length}</p>
+                  <p>Products</p>
+                  <p>{products.length}</p>
                 </Link>
                 <Link to="/admin/orders">
                   <p>Orders</p>
-                  <p>{orders && orders.length}</p>
+                  <p>{orders.length}</p>
                 </Link>
                 <Link to="/admin/users">
                   <p>Users</p>
-                  <p>{users && users.length}</p>
+                  <p>{users.length}</p>
                 </Link>
               </div>
             </div>
@@ -126,6 +187,6 @@ const Dashboard = () => {
           </div>
         </div>
       );
-  };
+};
   
 export default Dashboard;

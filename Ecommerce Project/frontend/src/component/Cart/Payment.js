@@ -163,6 +163,8 @@ const Payment = () => {
       };
 
       await dispatch(createOrder(order)); 
+
+      dispatch(clearCart());
       navigate("/success"); 
       
     } catch (error) {
@@ -192,7 +194,7 @@ const Payment = () => {
 
           <input
             type="submit"
-            value={`Pay - ₹${orderInfo && orderInfo.totalPrice}`}
+            value={`Pay - ${orderInfo && orderInfo.totalPrice}VND`}
             ref={payBtn}
             className="paymentFormBtn"
           />

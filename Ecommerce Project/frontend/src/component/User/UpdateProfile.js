@@ -8,9 +8,9 @@ import { clearErrors, updateProfile, loadUser } from "../../actions/userAction";
 import { useAlert } from "react-alert";
 import { UPDATE_PROFILE_RESET } from "../../constants/userConstants";
 import MetaData from "../layout/MetaData";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-const UpdateProfile = ({ history }) => {
+const UpdateProfile = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const navigate = useNavigate();
@@ -27,24 +27,28 @@ const UpdateProfile = ({ history }) => {
     e.preventDefault();
 
     const myForm = new FormData();
-
     myForm.set("name", name);
     myForm.set("email", email);
-    myForm.set("avatar", avatar);
+    if (avatar) {
+      myForm.set("avatar", avatar); // Use the actual file object
+    }
+
     dispatch(updateProfile(myForm));
   };
 
   const updateProfileDataChange = (e) => {
-    const reader = new FileReader();
+    const file = e.target.files[0];
 
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatarPreview(reader.result);
-        setAvatar(reader.result);
-      }
-    };
-
-    reader.readAsDataURL(e.target.files[0]);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setAvatarPreview(reader.result);
+          setAvatar(file); // Set the file object instead of the base64 string
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
@@ -62,14 +66,14 @@ const UpdateProfile = ({ history }) => {
     if (isUpdated) {
       alert.success("Profile Updated Successfully");
       dispatch(loadUser());
-
       navigate("/account");
 
       dispatch({
         type: UPDATE_PROFILE_RESET,
       });
     }
-  }, [dispatch, error, alert, history, user, isUpdated]);
+  }, [dispatch, error, alert, user, isUpdated, navigate]);
+
   return (
     <Fragment>
       {loading ? (

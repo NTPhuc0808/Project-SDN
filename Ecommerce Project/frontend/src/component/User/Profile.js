@@ -10,7 +10,6 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If not authenticated, redirect to login
     if (isAuthenticated === false) {
       navigate("/login");
     }
@@ -46,7 +45,7 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    <Link to="/orders">My Orders</Link>
+                    {user.role !== "admin" && <Link to="/orders">My Orders</Link>}
                     <Link to="/password/update">Change Password</Link>
                   </div>
                 </div>

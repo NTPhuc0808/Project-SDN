@@ -12,13 +12,24 @@ import MetaData from "../layout/MetaData";
 import { useParams, useNavigate } from "react-router-dom";
 
 const categories = [
-  "Laptop",
-  "Footwear",
-  "Bottom",
-  "Tops",
-  "Attire",
-  "Camera",
-  "SmartPhones",
+  "Bánh quy",
+  "Bánh gạo",
+  "Bánh quế",
+  "Bánh snack, rong biển",
+  "Bánh Chocopie",
+  "Bánh bông lan",
+  // "Bánh tươi, Sandwich",
+  // "Socola",
+  // "Bánh que",
+  // "Kẹo cứng",
+  // "Kẹo dẻo, kẹo marshmallow",
+  // "Kẹo singum",
+  // "Trái cây sấy",
+  // "Hạt khô",
+  // "Rau câu, thạch dừa",
+  // "Mứt trái cây",
+  // "Cơm cháy, bánh tráng",
+  // "Bánh xốp"
 ];
 
 const Products = () => {
@@ -28,7 +39,7 @@ const Products = () => {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [price, setPrice] = useState([0, 25000]);
+  const [price, setPrice] = useState([0, 100000]);
   const [category, setCategory] = useState("");
   const [ratings, setRatings] = useState(0);
   const [keyword, setKeyword] = useState(keywordFromURL || ""); 
@@ -106,7 +117,7 @@ const Products = () => {
               valueLabelDisplay="auto"
               aria-labelledby="range-slider"
               min={0}
-              max={25000}
+              max={900000}
             />
             <Typography>Categories</Typography>
             <ul className="categoryBox">

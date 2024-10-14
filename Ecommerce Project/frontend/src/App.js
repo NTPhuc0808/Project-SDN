@@ -56,7 +56,7 @@ function App() {
       <Header />
       {isAuthenticated && <UserOptions user={user} />}
       <Routes>
-        <Route path="/" element={<Products/>} />
+        <Route path="/" element={<Home />} />
         <Route path='/about' element={<About />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/products" element={<Products />} />

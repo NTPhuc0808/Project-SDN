@@ -16,38 +16,38 @@ const Home = () => {
   const { 
     loading, 
     error, 
-    products,  // Product list from Redux store
-    productsCount, // Total count of products
-    resultPerPage, // Number of products per page
-    filteredProductsCount,  // Total number of filtered products
+    products, 
+    productsCount, 
+    resultPerPage, 
+    filteredProductsCount, 
   } = useSelector((state) => state.products);
 
-  const [currentPage, setCurrentPage] = useState(1);  // Manage current page for pagination
+  const [currentPage, setCurrentPage] = useState(1);  
   const setCurrentPageNo = (e) => {
     setCurrentPage(e);
   };
 
-  let count = filteredProductsCount;  // Ensure correct count for pagination
-  const { category } = useParams();  // Get category from URL params
+  let count = filteredProductsCount;  
+  const { category } = useParams(); 
 
-  // Fetch products when the component loads or when category or page changes
+
   useEffect(() => {
     if (error) {
       alert.error(error);
       dispatch(clearErrors());
     }
     
-    dispatch(getProduct(category, currentPage));  // Pass current page to fetch products
-  }, [dispatch, error, alert, category, currentPage]);  // Refetch products when page changes
+    dispatch(getProduct(category, currentPage));  
+  }, [dispatch, error, alert, category, currentPage]); 
 
-  // Sort products by `createdAt` field (newest first)
+
   const sortedProducts = products ? 
     [...products].sort((a, b) => {
-      if (!a.createdAt || !b.createdAt) return 0;  // Handle missing dates
-      return new Date(b.createdAt) - new Date(a.createdAt);  // Sort by createdAt
+      if (!a.createdAt || !b.createdAt) return 0;  
+      return new Date(b.createdAt) - new Date(a.createdAt); 
     }) : [];
 
-  // Optionally filter products by ratings > 0
+
   const filteredSortedProducts = sortedProducts.filter(product => product.ratings > 0);
 
   return (

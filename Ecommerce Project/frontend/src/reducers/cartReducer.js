@@ -5,14 +5,18 @@ import {
   CLEAR_CART,
 } from "../constants/cartConstants";
 
-export const cartReducer = (
-  state = { cartItems: [], shippingInfo: {} },
-  action
-) => {
+// Initial state with empty cartItems and shippingInfo
+const initialState = {
+  cartItems: [],
+  shippingInfo: {},
+};
+
+export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART:
       const item = action.payload;
 
+      // Check if the item exists in the cart
       const isItemExist = state.cartItems.find(
         (i) => i.product === item.product
       );

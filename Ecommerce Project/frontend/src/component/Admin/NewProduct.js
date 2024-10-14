@@ -25,18 +25,29 @@ const NewProduct = () => {
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [Stock, setStock] = useState(0);
+  const [Stock, setStock] = useState(0); // Ensure capitalization is consistent
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
 
   const categories = [
-    "Laptop",
-    "Footwear",
-    "Bottom",
-    "Tops",
-    "Attire",
-    "Camera",
-    "SmartPhones",
+    "Bánh quy",
+    "Bánh gạo",
+    "Bánh quế",
+    "Bánh snack, rong biển",
+    "Bánh Chocopie",
+    "Bánh bông lan",
+    "Bánh tươi, Sandwich",
+    "Socola",
+    "Bánh que",
+    "Kẹo cứng",
+    "Kẹo dẻo, kẹo marshmallow",
+    "Kẹo singum",
+    "Trái cây sấy",
+    "Hạt khô",
+    "Rau câu, thạch dừa",
+    "Mứt trái cây",
+    "Cơm cháy, bánh tráng",
+    "Bánh xốp"
   ];
 
   useEffect(() => {
@@ -71,20 +82,20 @@ const NewProduct = () => {
 
   const createProductImagesChange = (e) => {
     const files = Array.from(e.target.files);
-
+  
     setImages([]); 
-    setImagesPreview([])
-
+    setImagesPreview([]);
+  
     files.forEach((file) => {
       const reader = new FileReader();
-
+  
       reader.onload = () => {
         if (reader.readyState === 2) {
           setImagesPreview((old) => [...old, reader.result]); 
           setImages((old) => [...old, file]); 
         }
       };
-
+  
       reader.readAsDataURL(file);
     });
   };
@@ -118,6 +129,7 @@ const NewProduct = () => {
                 type="number"
                 placeholder="Price"
                 required
+                value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
@@ -151,6 +163,7 @@ const NewProduct = () => {
                 type="number"
                 placeholder="Stock"
                 required
+                value={Stock} // Bind value to state
                 onChange={(e) => setStock(e.target.value)}
               />
             </div>
@@ -174,7 +187,7 @@ const NewProduct = () => {
             <Button
               id="createProductBtn"
               type="submit"
-              disabled={loading ? true : false}
+              disabled={loading}
             >
               Create
             </Button>

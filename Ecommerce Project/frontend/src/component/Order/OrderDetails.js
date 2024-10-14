@@ -108,7 +108,7 @@ const OrderDetails = () => {
                       </Link>{" "}
                       <span>
                         {item.quantity} X {item.price}VND ={" "}
-                        <b>₹{item.price * item.quantity}</b>
+                        <b>{item.quantity*item.price}VND</b>
                       </span>
                     </div>
                   ))}

@@ -38,13 +38,24 @@ const UpdateProduct = () => {
   const [imagesPreview, setImagesPreview] = useState([]);
 
   const categories = [
-    "Laptop",
-    "Footwear",
-    "Bottom",
-    "Tops",
-    "Attire",
-    "Camera",
-    "SmartPhones",
+    "Bánh quy",
+    "Bánh gạo",
+    "Bánh quế",
+    "Bánh snack, rong biển",
+    "Bánh Chocopie",
+    "Bánh bông lan",
+    // "Bánh tươi, Sandwich",
+    // "Socola",
+    // "Bánh que",
+    // "Kẹo cứng",
+    // "Kẹo dẻo, kẹo marshmallow",
+    // "Kẹo singum",
+    // "Trái cây sấy",
+    // "Hạt khô",
+    // "Rau câu, thạch dừa",
+    // "Mứt trái cây",
+    // "Cơm cháy, bánh tráng",
+    // "Bánh xốp"
   ];
 
   useEffect(() => {
@@ -102,27 +113,26 @@ const UpdateProduct = () => {
     // Use 'id' instead of 'productId'
     dispatch(updateProduct(id, myForm));
   };
-
-  const updateProductImagesChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    setImages([]);
-    setImagesPreview([]);
-    setOldImages([]);
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setImagesPreview((old) => [...old, reader.result]);
-          setImages((old) => [...old, reader.result]);
-        }
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
+    const updateProductImagesChange = (e) => {
+      const files = Array.from(e.target.files);
+  
+      setImages([]);
+      setImagesPreview([]);
+      setOldImages([]);
+  
+      files.forEach((file) => {
+        const reader = new FileReader();
+  
+        reader.onload = () => {
+          if (reader.readyState === 2) {
+            setImagesPreview((old) => [...old, reader.result]);
+            setImages((old) => [...old, reader.result]);
+          }
+        };
+  
+        reader.readAsDataURL(file);
+      });
+    };
 
   return (
     <Fragment>

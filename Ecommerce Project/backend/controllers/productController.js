@@ -30,18 +30,14 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
   const imagesLinks = [];
 
   for (let i = 0; i < images.length; i++) {
-    try {
-      const result = await cloudinary.v2.uploader.upload(images[i], {
-        folder: "products",
-      });
-      imagesLinks.push({
-        public_id: result.public_id,
-        url: result.secure_url,
-      });
-    } catch (error) {
-      console.error("Cloudinary upload error: ", error);
-      return next(new ErrorHander("Image upload failed", 500));
-    }
+    const result = await cloudinary.v2.uploader.upload(images[i], {
+      folder: "products",
+    });
+
+    imagesLinks.push({
+      public_id: result.public_id,
+      url: result?.secure_url,
+    });
   }
 
   req.body.images = imagesLinks;
@@ -54,6 +50,7 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
     product,
   });
 });
+
 
 
 
@@ -93,14 +90,31 @@ exports.getAllProducts = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get All Product (Admin)
-exports.getAdminProducts = catchAsyncErrors(async (req, res, next) => {
-    const products = await Product.find();
+// exports.getAdminProducts = catchAsyncErrors(async (req, res, next) => {
+//     const products = await Product.find();
   
+//     res.status(200).json({
+//       success: true,
+//       products,
+//     });
+//   });
+
+exports.getAdminProducts = catchAsyncErrors(async (req, res, next) => {
+  try {
+    // Sorting by createdAt in descending order
+    const products = await Product.find().sort({ createdAt: -1 });
+
     res.status(200).json({
       success: true,
       products,
     });
-  });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return next(new ErrorHandler("Failed to retrieve products", 500));
+  }
+});
+
+
 
 
 // Update Product -- Admin
@@ -130,7 +144,7 @@ exports.updateProduct = catchAsyncErrors(async (req, res, next) => {
     let product = await Product.findById(req.params.id);
   
     if (!product) {
-      return next(new ErrorHander("Product not found", 404));
+      return next(new ErrorHandler("Product not found", 404));
     }
   
     // Images Start Here

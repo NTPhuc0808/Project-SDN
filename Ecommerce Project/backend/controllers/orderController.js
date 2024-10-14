@@ -81,38 +81,57 @@ exports.getAllOrders = catchAsyncErrors(async (req, res, next) => {
 
 // Update Order Status -- Admin
 exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
-    const order = await Order.findById(req.params.id);
-  
-    if (!order) {
-      return next(new ErrorHander("Order not found with this Id", 404));
-    }
-  
-    if (order.orderStatus === "Delivered") {
-      return next(new ErrorHander("You have already delivered this order", 400));
-    }
-  
-    if (req.body.status === "Shipped") {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+      return next(new ErrorHandler("Order not found with this Id", 404));
+  }
+
+  if (order.orderStatus === "Delivered") {
+      return next(new ErrorHandler("You have already delivered this order", 400));
+  }
+
+  if (req.body.status === "Shipped") {
+      // Kiểm tra stock trước khi cập nhật
+      const stockSufficient = await checkStock(order.orderItems);
+      if (!stockSufficient) {
+          return next(new ErrorHandler("Not enough stock to fulfill the order", 400));
+      }
+
       order.orderItems.forEach(async (o) => {
-        await updateStock(o.product, o.quantity);
+          await updateStock(o.product, o.quantity);
       });
-    }
-    order.orderStatus = req.body.status;
-  
-    if (req.body.status === "Delivered") {
+  }
+
+  order.orderStatus = req.body.status;
+
+  if (req.body.status === "Delivered") {
       order.deliveredAt = Date.now();
-    }
-  
-    await order.save({ validateBeforeSave: false });
-    res.status(200).json({
+  }
+
+  await order.save({ validateBeforeSave: false });
+  res.status(200).json({
       success: true,
-    });
   });
+});
 
 async function updateStock(id, quantity) {
-    const product = await Product.findById(id);
-    product.Stock -= quantity;
-    await product.save({ validateBeforeSave: false });
+  const product = await Product.findById(id);
+  product.Stock -= quantity;
+  await product.save({ validateBeforeSave: false });
 }
+
+// Hàm kiểm tra stock
+async function checkStock(orderItems) {
+  for (let item of orderItems) {
+      const product = await Product.findById(item.product);
+      if (product.Stock < item.quantity) {
+          return false; // Không đủ stock
+      }
+  }
+  return true; // Đủ stock cho tất cả các sản phẩm
+}
+
 
 
 // Delete Order -- Admin
