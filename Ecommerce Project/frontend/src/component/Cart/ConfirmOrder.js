@@ -122,6 +122,14 @@ import "./ConfirmOrder.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 
+// Helper function to format currency
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('vi-VN', {
+      style: 'decimal', 
+      minimumFractionDigits: 0,
+  }).format(amount) + ' VND'; 
+};
+
 const ConfirmOrder = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch(); 
@@ -152,7 +160,6 @@ const ConfirmOrder = () => {
 
     // Navigate to payment page
     navigate("/process/payment");
-    
   };
 
   return (
@@ -189,8 +196,8 @@ const ConfirmOrder = () => {
                       {item.name}
                     </Link>{" "}
                     <span>
-                      {item.quantity} X {item.price}VND ={" "}
-                      <b>{item.quantity * item.price}VND</b>
+                      {item.quantity} X {formatCurrency(item.price)} ={" "}
+                      <b>{formatCurrency(item.quantity * item.price)}</b>
                     </span>
                   </div>
                 ))}
@@ -203,15 +210,15 @@ const ConfirmOrder = () => {
             <div>
               <div>
                 <p>Subtotal:</p>
-                <span>{subtotal.toFixed(2)}VND</span> {/* Format to two decimal places */}
+                <span>{formatCurrency(subtotal)}</span> {/* Format to VND */}
               </div>
               <div>
                 <p>Shipping Charges:</p>
-                <span>{shippingCharges.toFixed(2)}VND</span>
+                <span>{formatCurrency(shippingCharges)}</span>
               </div>
               <div>
                 <p>GST:</p>
-                <span>{tax.toFixed(2)}VND</span>
+                <span>{formatCurrency(tax)}</span>
               </div>
             </div>
 
@@ -219,7 +226,7 @@ const ConfirmOrder = () => {
               <p>
                 <b>Total:</b>
               </p>
-              <span>{totalPrice.toFixed(2)}VND</span>
+              <span>{formatCurrency(totalPrice)}</span>
             </div>
 
             <button onClick={proceedToPayment}>Proceed To Payment</button>
@@ -231,3 +238,4 @@ const ConfirmOrder = () => {
 };
 
 export default ConfirmOrder;
+

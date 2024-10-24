@@ -23,7 +23,7 @@ import { Rating } from "@material-ui/lab";
 import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { useParams } from "react-router-dom";
 
-const ProductDetails = ({ match }) => {
+const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -57,7 +57,6 @@ const ProductDetails = ({ match }) => {
     setQuantity(qty); 
   };
   
-
   const decreaseQuantity = () => {
     if (1 >= quantity) return;
 
@@ -104,6 +103,14 @@ const ProductDetails = ({ match }) => {
     dispatch(getProductDetails(id));
   }, [dispatch, id, error, alert, reviewError, success]);
 
+  // Helper function to format price
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'decimal', 
+        minimumFractionDigits: 0,
+    }).format(amount) + ' VND'; 
+};
+
   return (
     <Fragment>
       {loading ? (
@@ -139,7 +146,7 @@ const ProductDetails = ({ match }) => {
                 </span>
               </div>
               <div className="detailsBlock-3">
-                <h1>{`${product.price} VND`}</h1>
+                <h1>{formatCurrency(product.price)}</h1> {/* Format the price */}
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
                     <button onClick={decreaseQuantity}>-</button>

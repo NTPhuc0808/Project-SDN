@@ -63,7 +63,10 @@ const ProcessOrder = () => {
     myForm.set("status", status);
     dispatch(updateOrder(id, myForm));
   };
-  
+
+  const formatCurrency = (amount) => {
+    return amount.toLocaleString('vi-VN') + ' VND'; // Format the amount
+  };
 
   if (loading) {
     return <Loader />;
@@ -115,7 +118,7 @@ const ProcessOrder = () => {
                   </div>
                   <div>
                     <p>Amount:</p>
-                    <span>{order.totalPrice} VND</span>
+                    <span>{formatCurrency(order.totalPrice)}</span> {/* Format the amount */}
                   </div>
                 </div>
 
@@ -139,8 +142,8 @@ const ProcessOrder = () => {
                         {item.name}
                       </Link>{" "}
                       <span>
-                        {item.quantity} X {item.price} VND ={" "}
-                        <b>{item.quantity * item.price} VND</b>
+                        {item.quantity} X {formatCurrency(item.price)} ={" "} {/* Format the item price */}
+                        <b>{formatCurrency(item.quantity * item.price)}</b> {/* Format the total for this item */}
                       </span>
                       {item.stock === 0 && (
                         <p className="outOfStockMessage">Out of Stock</p>

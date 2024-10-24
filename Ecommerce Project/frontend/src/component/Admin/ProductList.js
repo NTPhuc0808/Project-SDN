@@ -51,6 +51,14 @@ const ProductList = () => {
     dispatch(getAdminProduct());
   }, [dispatch, alert, error, deleteError, navigate, isDeleted]); 
 
+  // Helper function to format price
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'decimal', 
+        minimumFractionDigits: 0,
+    }).format(amount) + ' VND'; 
+};
+
   const columns = [
     { field: "id", headerName: "Product ID", minWidth: 200, flex: 0.5 },
     {
@@ -72,6 +80,7 @@ const ProductList = () => {
       type: "number",
       minWidth: 270,
       flex: 0.5,
+      renderCell: (params) => formatCurrency(params.value), // Format price here
     },
     {
       field: "actions",
@@ -106,7 +115,7 @@ const ProductList = () => {
       rows.push({
         id: item._id,
         stock: item.Stock,
-        price: item.price,
+        price: item.price, // Keep the raw price for rendering
         name: item.name,
       });
     });

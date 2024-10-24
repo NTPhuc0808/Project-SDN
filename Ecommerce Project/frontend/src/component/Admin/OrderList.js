@@ -15,12 +15,12 @@ import {
   clearErrors,
 } from "../../actions/orderAction";
 import { DELETE_ORDER_RESET } from "../../constants/orderConstants";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const OrderList = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate();
 
   const { error, orders } = useSelector((state) => state.allOrders);
   const { error: deleteError, isDeleted } = useSelector((state) => state.order);
@@ -49,6 +49,15 @@ const OrderList = () => {
     dispatch(getAllOrders());
   }, [dispatch, alert, error, deleteError, navigate, isDeleted]);
 
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'decimal', 
+        minimumFractionDigits: 0,
+    }).format(amount) + ' VND'; 
+};
+
+
+
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 300, flex: 1 },
     {
@@ -72,7 +81,6 @@ const OrderList = () => {
     {
       field: "amount",
       headerName: "Amount",
-      type: "number",
       minWidth: 270,
       flex: 0.5,
     },
@@ -81,7 +89,6 @@ const OrderList = () => {
       flex: 0.3,
       headerName: "Actions",
       minWidth: 150,
-      type: "number",
       sortable: false,
       renderCell: (params) => {
         return (
@@ -105,15 +112,17 @@ const OrderList = () => {
 
   const rows = [];
 
-  orders &&
-    orders.forEach((item) => {
-      rows.push({
-        id: item._id,
-        itemsQty: item.orderItems.length,
-        amount: item.totalPrice,
-        status: item.orderStatus,
-      });
+  // Sort orders by createdAt date or by id
+  const sortedOrders = orders ? [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
+
+  sortedOrders.forEach((item) => {
+    rows.push({
+      id: item._id,
+      itemsQty: item.orderItems.length,
+      amount: formatCurrency(item.totalPrice), // Format the amount here
+      status: item.orderStatus,
     });
+  });
 
   return (
     <Fragment>

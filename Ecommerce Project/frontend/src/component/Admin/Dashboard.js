@@ -22,8 +22,8 @@ import {
   Tooltip,
   Legend,
   ArcElement,
-  PointElement, 
-  LineElement,  
+  PointElement,
+  LineElement,
 } from 'chart.js';
 
 ChartJS.register(
@@ -34,7 +34,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
-  PointElement, 
+  PointElement,
   LineElement    
 );
 
@@ -64,6 +64,11 @@ const Dashboard = () => {
       totalAmount += item.totalPrice;
     });
   
+    // Function to format currency in VND
+    const formatCurrency = (amount) => {
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " VND";
+    };
+
     const lineState = {
       labels: ["Initial Amount", "Amount Earned"],
       datasets: [
@@ -96,17 +101,16 @@ const Dashboard = () => {
         doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
         doc.setFont("Roboto"); 
         
-        
         doc.text(`Dashboard Daily Report: ${new Date().toDateString()}`, 14, 15);
 
         // Total Amount and Stock Summary
-        doc.text(`Total Amount: ${totalAmount} VND`, 14, 25);
+        doc.text(`Total Amount: ${formatCurrency(totalAmount)}`, 14, 25);
         doc.text(`Out of Stock Products: ${outOfStock}`, 14, 30);
         doc.text(`In Stock Products: ${products.length - outOfStock}`, 14, 35);
 
         // Products Table
         const productColumn = ["Product Name", "Stock", "Price"];
-        const productRows = products.map(product => [product.name, product.Stock, product.price]);
+        const productRows = products.map(product => [product.name, product.Stock, formatCurrency(product.price)]); // Format price
 
         doc.autoTable({
             head: [productColumn],
@@ -119,7 +123,7 @@ const Dashboard = () => {
 
         // Orders Table
         const orderColumn = ["Order ID", "Total Price", "Order Status"];
-        const orderRows = orders.map(order => [order._id, order.totalPrice, order.orderStatus]);
+        const orderRows = orders.map(order => [order._id, formatCurrency(order.totalPrice), order.orderStatus]); // Format total price
 
         doc.autoTable({
             head: [orderColumn],
@@ -156,7 +160,7 @@ const Dashboard = () => {
     
             <div className="dashboardSummary">
               <div>
-                <p>Total Amount <br /> {totalAmount} VND</p>
+                <p>Total Amount <br /> {formatCurrency(totalAmount)}</p>
                 <Button variant="contained" color="primary" onClick={exportToPDF}>
                   Export Dashboard to PDF
                 </Button>
@@ -186,7 +190,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      );
+    );
 };
   
 export default Dashboard;

@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
           product.images && product.images.length > 0
             ? product.images[0].url
             : "placeholder.jpg"
-        } 
+        }
         alt={product.name}
       />
       <p>{product.name}</p>
@@ -26,7 +26,7 @@ const ProductCard = ({ product }) => {
           {" "}({product.numOfReviews || 0} Reviews)
         </span>
       </div>
-      <span>{`${product.price || 0} VND`}</span>
+      <span>{`${product.price?.toLocaleString('vi-VN')} VND`}</span>
     </Link>
   );
 };

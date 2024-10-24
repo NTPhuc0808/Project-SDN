@@ -7,12 +7,18 @@ import { Typography } from "@material-ui/core";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link, useNavigate } from "react-router-dom";
 
+// Helper function to format currency
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('vi-VN', {
+      style: 'decimal', 
+      minimumFractionDigits: 0,
+  }).format(amount) + ' VND'; 
+};
+
 const Cart = () => {
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.cart);
   const navigate = useNavigate();
-
-
 
   const increaseQuantity = (id, quantity, stock) => {
     const newQty = quantity + 1;
@@ -43,7 +49,6 @@ const Cart = () => {
       {cartItems.length === 0 ? (
         <div className="emptyCart">
           <RemoveShoppingCartIcon />
-
           <Typography>No Product in Your Cart</Typography>
           <Link to="/products">View Products</Link>
         </div>
@@ -81,9 +86,10 @@ const Cart = () => {
                       +
                     </button>
                   </div>
-                  <p className="cartSubtotal">{`${
+                  {/* Format subtotal using formatCurrency */}
+                  <p className="cartSubtotal">{`${formatCurrency(
                     item.price * item.quantity
-                  }VND`}</p>
+                  )}`}</p>
                 </div>
               ))}
 
@@ -91,10 +97,13 @@ const Cart = () => {
               <div></div>
               <div className="cartGrossProfitBox">
                 <p>Gross Total</p>
-                <p>{`${cartItems.reduce(
-                  (acc, item) => acc + item.quantity * item.price,
-                  0
-                )}VND`}</p>
+                {/* Format gross total using formatCurrency */}
+                <p>{`${formatCurrency(
+                  cartItems.reduce(
+                    (acc, item) => acc + item.quantity * item.price,
+                    0
+                  )
+                )}`}</p>
               </div>
               <div></div>
               <div className="checkOutBtn">
